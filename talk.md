@@ -3,8 +3,8 @@ layout: true
 class: center, middle, inverse
 
 ---
-
-## data `\(\rightarrow\)` prediction `\(\rightarrow\)` production
+# Predictive services
+## From data to production
 <br>
 
 Jonas Brunsgaard & Helge Munk Jakobsen   
@@ -21,7 +21,7 @@ layout: false
 
 # Agenda
 
-* Our team and the problems we solve
+* Our team and our mission
 
 * Going from data to prediction
 
@@ -47,38 +47,174 @@ layout: false
 
 ---
 
-# Jonas Brunsgaard
+# About us
 
 * Located in Copenhagen, e-conomic office
 
-* With Visma Machine Learning (Autosuggest)
+* We do Autosuggest and other custom solutions
 
-* Interested in software arhitecture and elegant code
+#### Helge Munk Jakobsen
+
+* Data wizard  TODO
+
+#### Jonas Brunsgaard
+
+* Interested in software arhitecture, elegant code and best practices
 
 * Designing and building an upcomming end-to-end data science platform
+
 
 ---
 
 template: inverse
 
-## An end-to-end data science platform?
+# From data to prediction
 
 ---
 
-# What is “Data Science”?
+# Helge section
 
-There is a million defitions of data science, we will use this one
+---
 
-> Data science aims to build systems that support and automate data-driven
-> operational decisions. 
+template: inverse
 
-Operational decisions are decisions that businesses need to make in huge
-numbers, on a frequent and regular basis, that have a direct impact on the
-business KPI’s and the outcome can be evaluated in short time scales. 
+# From prediction to production
 
-Examples might be “What is the best price for each single product tomorrow?” or
-“What is the optimal amount for each single product for the next order sent to
-supplier X?”.
+---
+
+# The initial constraints
+
+* Constant data ingress
+* Python Sklearn (configuration)
+* Testing
+* Scaling
+
+---
+
+# The naive approach
+
+We create a application that loads the data and trains the model on runtime. A
+CI is testing the application and releases an artifact which is run on a VPS
+in the cloud, A provisioning system is used to setup the VPS and install the
+software.
+
+<br>.center[![:scale 100%](first.svg)]
+
+---
+
+# The naive approach
+
+.center[![:scale 50%](test.svg)]
+
+```python
+import api
+
+app = api.create(name='Berlin')
+
+@app.route('/predict', method=['POST'])
+def predict(request):
+    model = Model()  # Naive Bayes is O(n)
+    training_data = db.get_all_observed_events()
+    model.train(training_data)
+    return m.predict(request.json)
+
+app.run()
+```
+
+---
+
+# The naive approach
+
+The model Helge showed, is holding an internal matrix with the the features (in this case 20000 columns).
+This means that for every new training data entry the matrix is growing with 20000 64bit integers.
+
+This gives us an idea about the model growth
+
+$$\frac{\frac{64}{8}}{2^{30}} \times 20000 = 0.00015\text{GB}$$
+thus
+$$y = 0.00015x$$
+
+
+---
+
+# The naive approach
+
+This is worst case, but illustrates the problem
+
+<br>.center[![:scale 65%](modelsize.svg)]
+
+With sparse matrices we can get tremendous a improvement.
+
+---
+
+# The naive approach
+
+Soon we experience that when data scales our solution starts to struggle
+
+<br>.center[![:scale 65%](plans.png)]
+
+* Model training might be too slow and makes requests timeout
+* Model training takes up an unhealthy amount of CPU time
+* The server is running out of memory
+
+
+---
+
+# Pretraining models
+
+<br>.center[![:scale 65%](cibuildmodel.svg)]
+
+---
+
+# Pretraining models
+
+<br>.center[![:scale 65%](model2deploy.svg)]
+
+---
+
+# Pretraining models
+
+* Conflicting versions
+
+```python
+import pickle
+
+# 1. We define a model
+class Model():
+
+    def __init__(self, data):
+        self.data = data
+
+    def train(self):
+        self.data  # access the data to train the mode
+
+# 2. We create and train a model instance
+model = Model(['i', 'am', 'the', 'data'])
+
+# 3. We save the model instance
+serialized_model = pickle.dumps(model)
+```
+
+---
+
+```python
+# 4. We update the model, due to a bug and release a patch
+class Model():
+
+    def __init__(self, training_data):
+        self.training_data = training_data
+
+    def train(self):
+        self.trainign_data  # access the data to train the mode
+
+# 5. In production we load in a model from s3
+model = pickle.loads(serialized_model)
+
+# 6. And when we access the attribute model_cls
+model.train()
+```
+
+
 
 ---
 
@@ -100,14 +236,6 @@ supplier X?”.
 
 ---
 
-# Build a prediction service!
-
-We can do that, it is super easy :)
-
-<br>.center[![:scale 65%](plans.png)]
-
-
----
 
 # Components
 

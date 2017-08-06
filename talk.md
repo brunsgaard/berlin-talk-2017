@@ -59,6 +59,8 @@ layout: false
 
 ---
 
+layout: false
+
 template: inverse
 
 ## An end-to-end data science platform?

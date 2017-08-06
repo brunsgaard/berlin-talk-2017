@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Building data products</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="theme.css">
+    </head>
+    <body>
+        <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML&delayStartupUntil=configured" type="text/javascript"></script>
+        <script>
+         var slideshow = remark.create({
+             sourceUrl: 'talk.md',
+             highlightStyle: 'solarized-light',
+             highlightSpans: false,
+             highlightLanguage: 'python',
+         })
+         // Image scaling
+		 remark.macros.scale = function (percentage) {
+		   var url = this;
+		   return '<img src="' + url + '" style="width: ' + percentage + '" />';
+		 };
+
+         // Setup MathJax
+         MathJax.Hub.Config({
+             tex2jax: {
+             skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+             }
+         });
+
+         MathJax.Hub.Configured();
+        </script>
+    </body>
+</html>

@@ -76,6 +76,8 @@ template: inverse
 
 ---
 
+layout: false
+
 template: inverse
 
 # From prediction to production

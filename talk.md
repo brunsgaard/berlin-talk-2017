@@ -23,13 +23,13 @@ layout: false
 
 * Our team and our mission
 
-* Going from data to prediction
+* From **DATA** to **PREDICTION**
 
  * Tools, techniques and processes
 
  * Magic explain while live coding
 
-* From prediction to production
+* From **PREDICTION** to **PRODUCTION**
 
   * What goes into a hosted model (data, model, api, auth, metric, logging)
 
@@ -49,13 +49,17 @@ layout: false
 
 # About us
 
-* Located in Copenhagen, e-conomic office
+* The Visma Machine Learning Team
 
-* We do Autosuggest and other custom solutions
+* Located in Copenhagen (e-conomic office)
+
+* Team headcount: 4
+
+* Main focus: AutoSuggest
 
 #### Helge Munk Jakobsen
 
-* Data wizard  TODO
+* Interested in data and predictive modelling
 
 #### Jonas Brunsgaard
 
@@ -68,11 +72,50 @@ layout: false
 
 template: inverse
 
-# From data to prediction
+# From **DATA** to **PREDICTION**
 
 ---
 
-# Helge section
+# Intro
+
+Data -> Magic -> Prediction
+
+---
+
+# Intro
+
+Data -> ~~Magic~~ Math + Code -> Prediction
+
+---
+
+# Hands on exercise
+
+* **Goal:** Account suggester
+
+* **Example:** For "Taxi to conference" -> Travel Expense (maybe)
+
+* No hardcoded rules
+
+---
+
+# The big picture
+
+* Supervised learning (Prediction based on examples)
+
+* Classification
+
+* One single type of model
+
+<br>.center[![:scale 75%](ml-overview.png)]
+
+<!-- ---
+
+# The big picture
+
+* Supervised learning (Prediction based on examples)
+* Classification
+* One single type of model
+<br>.center[![:scale 85%](ml-overview2.png)] -->
 
 ---
 
@@ -80,7 +123,24 @@ layout: false
 
 template: inverse
 
-# From prediction to production
+# Let's code!
+
+---
+
+layout: false
+
+template: inverse
+
+# Thanks!
+
+---
+
+layout: false
+
+template: inverse
+
+# From **PREDICTION**
+# to **PRODUCTION**
 
 ---
 

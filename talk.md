@@ -23,56 +23,82 @@ layout: false
 
 * Our team and our mission
 
-* Going from data to prediction
+* PART1: From **DATA** to **PREDICTION**
 
- * Tools, techniques and processes
-
- * Magic explain while live coding
-
-* From prediction to production
-
-  * What goes into a hosted model (data, model, api, auth, metric, logging)
-
-  * Where do we put stuff (the model is not part of the release, the model is like data, where should we load it from, s3, local)
-
-  * Version misalignment, warming up the model, replacing a running model.
-
-  * Why docker/kubernetes is a nice fit for the hosting part of this usecase
-
-  * Lets deploy Helges model
+* PART2: From **PREDICTION** to **PRODUCTION**
 
 * The idea of an end-to-end data science platform
-
-* Conclusions
 
 ---
 
 # About us
 
-* Located in Copenhagen, e-conomic office
-
-* We do Autosuggest and other custom solutions
+* The Visma Machine Learning Team
+* Located in Copenhagen (e-conomic office)
+* Team headcount: 4
+* Main focus: AutoSuggest
 
 #### Helge Munk Jakobsen
 
-* Data wizard  TODO
+* Interested in data and predictive modelling
 
 #### Jonas Brunsgaard
 
 * Interested in software arhitecture, elegant code and best practices
-
 * Designing and building an upcomming end-to-end data science platform
-
 
 ---
 
 template: inverse
 
-# From data to prediction
+# From **DATA** to **PREDICTION**
+
+a gentle introduction to building predictive models aimed at developers
 
 ---
 
-# Helge section
+# Intro
+
+Data -> Magic -> Prediction
+
+---
+
+# Intro
+
+Data -> ~~Magic~~ Math + Code -> Prediction
+
+---
+
+# Hands on exercise
+
+* **Goal:** Build account suggestion service
+
+* **Example:** For "Taxi to conference" -> Travel expense account (maybe)
+
+* No hardcoded rules
+
+<br>.center[![:scale 75%](lookupdemo.png)]
+
+---
+
+# The big picture
+
+* Supervised learning (predictions)
+
+* Classification
+
+* One single type of model
+
+<br>.center[![:scale 75%](ml-overview.png)]
+
+<!-- ---
+
+# The big picture
+
+* Supervised learning (Prediction based on examples)
+* Classification
+* One single type of model
+<br>.center[![:scale 85%](ml-overview2.png)] -->
 
 ---
 
@@ -80,7 +106,24 @@ layout: false
 
 template: inverse
 
-# From prediction to production
+# Let's code!
+
+---
+
+layout: false
+
+template: inverse
+
+# Thanks!
+
+---
+
+layout: false
+
+template: inverse
+
+# From **PREDICTION**
+# to **PRODUCTION**
 
 ---
 

@@ -137,14 +137,15 @@ Create and deploy an service there is
 * easy to upgrade
 * easy to rollback
 * scalable
-* ... (you get the idea ;) )
+* ... 
 
-In short we have to align with VCDM.
+In short, is has to be production grade.
+
 
 # Constraints
 
-* Python
 * Scikit learn
+* Python
 
 ---
 
@@ -152,7 +153,7 @@ In short we have to align with VCDM.
 # The naive approach
 
 We create a application that loads the data and trains the model on runtime. 
-.center[![:scale 50%](test.svg)]
+<br><br>.center[![:scale 50%](test.svg)]<br>
 
 ```python
 import api
@@ -184,8 +185,7 @@ software.
 
 # The naive approach
 
-Soon we experience that when data scales our solution starts to struggle
-
+Soon we experience that our solution starts to struggle as data scales
 
 * Model training might be too slow and makes requests timeout
 * Model training takes up an unhealthy amount of CPU time
@@ -210,8 +210,8 @@ s3
 
 # Async training approach
 
-Now to provision an api server we take serialized trained\_model from s3 and
-deserialize it into out api appilication
+Now, to provision an api server we take serialized model from s3 and
+deserialize it into our api appilication
 
 <br>.center[![:scale 100%](model2deploy.svg)]
 
@@ -219,22 +219,25 @@ deserialize it into out api appilication
 
 # Async training approach
 
-We solved one problem, but introduced another.
+We solved one problem, but introduced another. 
 
-Now when the application starts it reads the serilized scikit learn object.
-If we change the model code or scikit learn or its dependencies are updated,
-our models might not be deserializable anymore.
+**We have to serialize and deserialize in identical environments.**
 
-This solution is better than the naive approach, but now we have to 
+That might introduce problems
 
-keep meta information with the models about the _whole_ toolchain
+ * if we change the model code
+ * if scikit learn upgrade 
+ * scikit learn dependencies are upgraded, 
+ * a data scientist manually uploading a new model to stating
 
-This feel overcomplicated and is lacking robustness.
+We can keep a comprehensive amount of environment metadata with the models, but
+it feels overcomplicated and the solution is lacking robustness.
+
+We are not happy with the solution yet! :(
 
 ---
 
 # Containers to the rescue
-
 
 <br>.center[![:scale 70%](containerintro.png)]
 
@@ -247,11 +250,14 @@ images and store then in a docker regrestry.
 
 <br>.center[![:scale 65%](dockerci.svg)]<br>
 
-The images hold the api code, the trained\_models and all the dependencies.
+The container image holds the api code, the trained\_models and all the
+dependencies.
 
 ---
 
 # Docker in practice
+
+A `Dockerfile` is used to describe how an image is build
 
 .small[```Dockerfile
 FROM visma/vml:1.0.0                 # base image with c/c++ deps
@@ -270,7 +276,7 @@ Then save it to the registry
 ~ docker push vml.azurecr.io/model-nps:local.1499177682
 ```]
 
-Now we have a registry with container images, how de we get a service out out
+Now we have a registry with container images, how de we get a service out of
 those?
 
 ---
@@ -302,6 +308,7 @@ production, such as:
 * Accessing and ingesting logs
 * Debugging applications
 * Providing authentication and authorization
+
 ---
 
 
@@ -349,29 +356,48 @@ When kubernetes is notified about a new image it updates the service
 # A container based approach
 
 * Isolation (deps, model, python)
-* Dockerfile in repo (testing on the data)
-* Kubernetes file in repo (Rolling deployment)
-* Scaling
+* Docker
+  * Testing
+  * Artifacts
+* Kubernetes
+  * Scanling
+  * roling deployments
 * Usibility
 
 ---
 
-# Scaffolding
+## A small tool for automating the deployment
 
-* Chalice was the inspiration
-* Enabeling Data scientists and other visma teams to deploy production grade models with new cli commands
+Enabeling Data scientists and other visma teams to deploy production grade
+models with new cli commands
 
+.center[![:scale 60%](fonkterm.png)]
 
-.center[![:scale 100%](fonkterm.png)]
+---
+
+# Putting Helges model into production
+
+2 min live coding, tool not ready yet
+
 ---
 
 # Future work
 
-The goal is to enable others to do data sciece
+Saas solution for hosting machine learning models in a VCDM compliant way.
 
-* Dashbord over models
-* SaaS
+* Dashbord
+* Datastore
+* A/B testing
 
 ---
 
+template: inverse
+
 # Conslusions
+
+* Red thread
+* know what you will say
+* Docker is process with dependecies
+* tools explanation
+* Flow is missing
+

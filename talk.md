@@ -23,38 +23,19 @@ layout: false
 
 * Our team and our mission
 
-* From **DATA** to **PREDICTION**
+* PART1: From **DATA** to **PREDICTION**
 
- * Tools, techniques and processes
-
- * Magic explain while live coding
-
-* From **PREDICTION** to **PRODUCTION**
-
-  * What goes into a hosted model (data, model, api, auth, metric, logging)
-
-  * Where do we put stuff (the model is not part of the release, the model is like data, where should we load it from, s3, local)
-
-  * Version misalignment, warming up the model, replacing a running model.
-
-  * Why docker/kubernetes is a nice fit for the hosting part of this usecase
-
-  * Lets deploy Helges model
+* PART2: From **PREDICTION** to **PRODUCTION**
 
 * The idea of an end-to-end data science platform
-
-* Conclusions
 
 ---
 
 # About us
 
 * The Visma Machine Learning Team
-
 * Located in Copenhagen (e-conomic office)
-
 * Team headcount: 4
-
 * Main focus: AutoSuggest
 
 #### Helge Munk Jakobsen
@@ -64,15 +45,15 @@ layout: false
 #### Jonas Brunsgaard
 
 * Interested in software arhitecture, elegant code and best practices
-
 * Designing and building an upcomming end-to-end data science platform
-
 
 ---
 
 template: inverse
 
 # From **DATA** to **PREDICTION**
+
+a gentle introduction to building predictive models aimed at developers
 
 ---
 
@@ -90,17 +71,19 @@ Data -> ~~Magic~~ Math + Code -> Prediction
 
 # Hands on exercise
 
-* **Goal:** Account suggester
+* **Goal:** Build account suggestion service
 
-* **Example:** For "Taxi to conference" -> Travel Expense (maybe)
+* **Example:** For "Taxi to conference" -> Travel expense account (maybe)
 
 * No hardcoded rules
+
+<br>.center[![:scale 75%](lookupdemo.png)]
 
 ---
 
 # The big picture
 
-* Supervised learning (Prediction based on examples)
+* Supervised learning (predictions)
 
 * Classification
 

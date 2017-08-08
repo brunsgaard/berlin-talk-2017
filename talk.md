@@ -114,14 +114,6 @@ layout: false
 
 template: inverse
 
-# Thanks!
-
----
-
-layout: false
-
-template: inverse
-
 # From **PREDICTION**
 # to **PRODUCTION**
 
@@ -391,7 +383,6 @@ Saas solution for hosting machine learning models in a VCDM compliant way.
 
 ---
 
-template: inverse
 
 # Conslusions
 
@@ -401,3 +392,8 @@ template: inverse
 * tools explanation
 * Flow is missing
 
+---
+
+template: inverse
+
+# Thanks!

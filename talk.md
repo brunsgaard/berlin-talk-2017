@@ -251,7 +251,8 @@ dependencies.
 
 A `Dockerfile` is used to describe how an image is build
 
-.small[```Dockerfile
+.small[
+```Dockerfile
 FROM visma/vml:1.0.0                 # base image with c/c++ deps
 
 COPY code /code                      # copy the code
@@ -260,13 +261,16 @@ RUN python train_models.py           # train and serialize models
 RUN py.test --pyargs .               # test the modes
 
 CMD ["code/app.py"]                  # run the application
-```]
+```
+]
 
 Then save it to the registry
 
-.small[```bash
+.small[
+```bash
 ~ docker push vml.azurecr.io/model-nps:local.1499177682
-```]
+```
+]
 
 Now we have a registry with container images, how de we get a service out of
 those?
@@ -308,7 +312,8 @@ production, such as:
 
 An example of a kuberentes configuration
 
-.small[```yaml
+.small[
+```yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -332,7 +337,8 @@ spec:
               key: aws_credentials
         ports:
         - containerPort: 80
-```]
+```
+]
 
 ---
 

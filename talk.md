@@ -77,7 +77,7 @@ Data -> ~~Magic~~ Math + Code -> Prediction
 
 * No hardcoded rules
 
-<br>.center[![:scale 75%](lookupdemo.png)]
+<br>.center[![:scale 65%](img/hands-on-exercise.png)]
 
 ---
 
@@ -89,16 +89,8 @@ Data -> ~~Magic~~ Math + Code -> Prediction
 
 * One single type of model
 
-<br>.center[![:scale 75%](ml-overview.png)]
+<br>.center[![:scale 65%](img/the-big-picture.png)]
 
-<!-- ---
-
-# The big picture
-
-* Supervised learning (Prediction based on examples)
-* Classification
-* One single type of model
-<br>.center[![:scale 85%](ml-overview2.png)] -->
 
 ---
 
@@ -145,7 +137,7 @@ In short, is has to be production grade.
 # The naive approach
 
 We create a application that loads the data and trains the model on runtime. 
-<br><br>.center[![:scale 50%](test.svg)]<br>
+<br><br>.center[![:scale 50%](img/the-naive-approach-1.svg)]<br>
 
 ```python
 import api
@@ -170,7 +162,7 @@ A CI is testing the application and releases an artifact which is run on a VPS
 in the cloud, A provisioning system is used to setup the VPS and install the
 software.
 
-<br>.center[![:scale 100%](first.svg)]
+<br>.center[![:scale 100%](img/the-naive-approach-2.svg)]
 
 
 ---
@@ -190,13 +182,13 @@ Soon we experience that our solution starts to struggle as data scales
 
 ---
 
-# Async training approach
+# Async training approachsync training approach
 
 So we split the application in two components, the first component (shown
 below) will continuously train new models and upload the serialized models to
 s3 
 
-<br>.center[![:scale 65%](cibuildmodel.svg)]
+<br>.center[![:scale 65%](img/async-training-approach-1.svg)]
 
 ---
 
@@ -205,7 +197,7 @@ s3
 Now, to provision an api server we take serialized model from s3 and
 deserialize it into our api appilication
 
-<br>.center[![:scale 100%](model2deploy.svg)]
+<br>.center[![:scale 100%](img/async-training-approach-2.svg)]
 
 ---
 
@@ -231,7 +223,7 @@ We are not happy with the solution yet! :(
 
 # Containers to the rescue
 
-<br>.center[![:scale 70%](containerintro.png)]
+<br>.center[![:scale 70%](img/containers-to-the-rescue.png)]
 
 ---
 
@@ -240,7 +232,7 @@ We are not happy with the solution yet! :(
 Now instead of training models and storing them on s3, we now build container
 images and store then in a docker regrestry.
 
-<br>.center[![:scale 65%](dockerci.svg)]<br>
+<br>.center[![:scale 65%](img/a-container-based-approach-1.svg)]<br>
 
 The container image holds the api code, the trained\_models and all the
 dependencies.
@@ -279,31 +271,12 @@ those?
 
 # What is kubernetes
 
-.center[![:scale 100%](kubeintro.png)]
+.center[![:scale 100%](img/what-is-kubernetes-1.png)]
 
 --
-.center[![:scale 100%](kubeazure.png)]
 
----
-# What is kubernetes
+.center[![:scale 100%](img/what-is-kubernetes-2.png)]
 
-Kubernetes can schedule and run application containers on clusters of virtual
-machines, also it satisfies a number of common needs of applications running in
-production, such as:
-
-* Co-locating helper processes, facilitating composite applications and preserving the one-application-per-container model
-* Mounting storage systems
-* Distributing secrets
-* Checking application health
-* Replicating application instances
-* Using Horizontal Pod Autoscaling
-* Naming and discovering
-* Balancing loads
-* Rolling updates
-* Monitoring resources
-* Accessing and ingesting logs
-* Debugging applications
-* Providing authentication and authorization
 
 ---
 
@@ -317,23 +290,23 @@ An example of a kuberentes configuration
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: vml-model-albert-productinfo
+  name: einvoice-model
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        app: vml-model-albert-productinfo
+        app: einvoice-model
     spec:
       containers:
-      - name: vml-model-albert-productinfo
-        image: economic.azurecr.io/vml-model-albert-productinfo:local.1501853451
+      - name: einvoice-model
+        image: economic.azurecr.io/einvoice-model:v2
         imagePullPolicy: Always
         env:
         - name: AWS_CREDENTIALS
           valueFrom:
             secretKeyRef:
-              name: albert-env
+              name: einvoice-model-secrets
               key: aws_credentials
         ports:
         - containerPort: 80
@@ -345,9 +318,9 @@ spec:
 # A container based approach
 
 A ci is building new images over time
-<br><br>.left[![:scale 30%](dockerci.svg)]<br>
+<br><br>.left[![:scale 30%](img/a-container-based-approach-2.svg)]<br>
 When kubernetes is notified about a new image it updates the service
-<br><br>.center[![:scale 100%](kube.svg)]
+<br><br>.center[![:scale 100%](img/a-container-based-approach-3.svg)]
 
 ---
 
@@ -369,7 +342,7 @@ When kubernetes is notified about a new image it updates the service
 Enabeling Data scientists and other visma teams to deploy production grade
 models with new cli commands
 
-.center[![:scale 60%](fonkterm.png)]
+.center[![:scale 60%](img/a-small-tool-for-automating-the-deployment.png)]
 
 ---
 

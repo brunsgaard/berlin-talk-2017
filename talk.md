@@ -112,56 +112,52 @@ template: inverse
 
 # Let's get started
 We could write a simple API endpoint that loads in data and trains the model.
-There after we should be ready to serve requests
 <br><br>.center[![:scale 50%](img/the-naive-approach-1.svg)]<br>
 
 ```python
-import api
-
-app = api.create(name='Berlin')
-
-@app.route('/predict', method=['POST'])
+@route('/predict')
 def predict(request):
     model = Model()
-    training_data = db.get_all_observed_events()
-    model.train(training_data)
-    return model.predict(request.json)
-
-app.run()
+    training_data = get_data()
+    model.fit(training_data)  # fit means train
+    return model.predict(request)
 ```
 
 ---
 
-# What could possible to wrong
+# What could possibly go wrong
 
 
 ```python
-import api
-
-app = api.create(name='Berlin')
-
-@app.route('/predict', method=['POST'])
+@route('/predict')
 def predict(request):
-    model = Model()  # Naive Bayes is O(n)
-    training_data = db.get_all_observed_events()
-    model.train(training_data)
-    return model.predict(request.json)
-
-app.run()
+    model = Model()
+    training_data = get_data()
+    model.fit(training_data)  # fit means train
+    return model.predict(request)
 ```
 
- * Data availability - .small[we assume the data is available]
- * Data selection and preprocessing - .small[we select all the data and assume it is preprocessed]
- * Model training - .small[might take long time depending on the model and the data]
- * Resouce contraints - .small[CPU time and Memory]
+--
+count: false
+ * Data availability
+--
+count: false
+ * Data selection and preprocessing
+--
+count: false
+ * Model training
+--
+count: false
+ * Resouce contraints
+--
+count: false
 
 All in all this is just not a great solution!
-
 ---
 
-# So, what is needed?
+# Pre-training, what is needed?
 
-To build a __continuously updated prediction api__ we need:
+To build a __continuously updated prediction service__ we need:
 
 --
 
@@ -186,7 +182,7 @@ To build a __continuously updated prediction api__ we need:
 
 ---
 
-# So, what is needed?
+# Pre-training, what is needed?
 
 --
 
@@ -212,18 +208,13 @@ To build a __continuously updated prediction api__ we need:
 
 # Continuous is the keyword
 
-So what we need is a pipeline, that lets us train new models at will and
-redeploy to production multiple times a day.
+To sum it up we need three parts:
 
-To sum it up we need three components
 
-* Datastore - will make _prepared datasets_ available
-* CI/Scheduler - will train models continously
-* Api - will map REST call to the models
-
-<br>.center[![:scale 70%](img/components.svg)]
-
+<br>.center[![:scale 70%](img/components.svg)]<br>
+<!---
 Also we need an operations solution to make sure the whole service is available
+-->
 
 ---
 
@@ -239,7 +230,7 @@ template: inverse
 
 Extract, transform, load...
 
-<br>.center[![:scale 70%](img/ETL.png)]
+<br>.center[![:scale 65%](img/ETL.png)]
 
 
 ---
@@ -248,25 +239,25 @@ Extract, transform, load...
 
 We create a _prepared dataset_ per client/model/agreement, e.g.
 
-.small[`e-conomic/smartscan/agreement552343`]
+.small[`e-conomic/nps-model/agreement552343`]
 
-The datasets might at this point hold certain properties if needed
+<br>
+Data properties examples,
 
  * Entries are sorted by time stamp
  * Duplicates are removed
- * Text have been normalized
- * Maximum number of entries
+ * Maximum dataset size
 
+<br>
 Importing a dataset is now easy and can look like this.
 
 ```python
 import datastore
 
 # Fetching a dataset that are already prepared for the model
-data = datastore.get('e-conomic/smartscan/agreement552343')
+data = datastore.get('e-conomic/nps-model/agreement552343')
 ```
 
-Prepared datasets are updated as frequently as the client needs.
 
  <!---
 What does the properties give us
@@ -285,6 +276,8 @@ template: inverse
 
 ---
 
+<!---
+
 # Training Models
 
 Depending on the model type, training might happen before or during call time.
@@ -293,32 +286,43 @@ Depending on the model type, training might happen before or during call time.
 * _Domain_ - bigger models are _pre-trained_ with a collection of _prepared datasets_
 * _Mix_ - some domain models are modified with a _prepared dataset_ on _call time_
 
+--->
+
+# Challenges 
+
+* Serializing trained python model objects
+* Load in newly trained models into the api
+
 
 --
-<br>
-__We will only look at _Domain_ models__
 
---
+We want to:
 
-<br>
+ * Ensure that the environment does not change
+ * Ideally we would like to pack trained models with the api
+ * Matrue model rollout procedure
 
-We use containers to ensure that the environment is fixed.
+<!---
+ * Models are to us what data is to you
+ --->
+
+
 
 ---
 
-# Training Models
+# Containers to the rescue
 
 <br>.center[![:scale 70%](img/containers-to-the-rescue.png)]
 
 
 ---
 
-# Training Models
+# Containers to the rescue
 
-* The container image holds the api code, the trained\_models and all the
-dependencies. 
-* We build on container images on the CI and store the images on
-azure container registry
+The container image holds
+ * Api code
+ * Serialized trained models (And the model code)
+ * Dependencies
 
 
 <br>.center[![:scale 65%](img/a-container-based-approach-1.svg)]<br>
@@ -332,25 +336,27 @@ A `Dockerfile` is used to describe how an image is build
 
 .small[
 ```Dockerfile
-FROM visma/machinelearning:1.0.4                       # base image with c/c++ deps
+FROM visma/machinelearning:1.1.4           # base image with c/c++ deps
 
-RUN pip install vml-model-smartscan        # install deps
-RUN pip install vml-model-api              # install deps
+RUN pip install vml-model-nps              # install deps
+RUN pip install vml-api                    # install deps
 
 RUN python train_models.py                 # train and serialize models 
 RUN py.test --pyargs .                     # test the model and sanity
 
-ENTRYPOINT ["python -m vml-api"]           # run the application
+ENTRYPOINT ["python app.py"]               # run the application
 ```
 ]
 
+<!---
 Then save it to the registry
 
 .small[
 ```bash
-~ docker push vml.azurecr.io/model-smartscan:v2-1499177682
+~ docker push vml.azurecr.io/model-nps:v2-1499177682
 ```
 ]
+--->
 
 
 ---
@@ -360,7 +366,7 @@ layout: false
 template: inverse
 
 # Container orchestration
-In kubernetes we trust
+In Kubernetes we trust
 
 ---
 
@@ -385,14 +391,14 @@ An example of a kuberentes configuration
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: smartscan-model
+  name: nps-model
 spec:
   replicas: 3
   template:
     spec:
       containers:
-      - name: smartscan-model
-      - image: vml.azurecr.io/model-smartscan:v2-1499177682
+      - name: nps-model
+      - image: vml.azurecr.io/nps-model:v2-1499177682
         resources:
           requests:
             memory: "512Mi"
@@ -402,7 +408,7 @@ spec:
         - name: AWS_CREDENTIALS
           valueFrom:
             secretKeyRef:
-              name: smartscan-model-secrets
+              name: nps-model-secrets
               key: aws_credentials
         ports:
         - containerPort: 80
@@ -413,14 +419,16 @@ spec:
 
 # Putting it all together
 
-We have a datastore with _prepared datasets_ and a CI is building new images over time
+_prepared datasets_ + scheduler = container images
+
 <br>.center[![:scale 35%](img/a-container-based-approach-2.svg)]<br>
-The CI will tell Kubernetes to replace the containers, as soon as new images
-are available
+
+scheduler + kubernetes = containers
 
 .center[![:scale 90%](img/a-container-based-approach-3.svg)]
 
----
+
+<!---
 
 ## Docker and Kubernetes gave me
 
@@ -431,17 +439,12 @@ are available
 * Scaling thought in
 * State configuration of services
 * Dev and Ops separation of concerns
+
+-->
+
 ---
 
-##Deploying to Kubernetes from notebook
-
-Gazelle is a small tool we are working on that will let data scientists spin up
-prediction endpoints from a jupyter notebook.
-
-It works by serializing the model and sending it to a server that puts it into
-a conatiner uploads the image and notifies kubernets about the the new endpoint
-
-Lets us try it to get Helges models up and running.
+## Deploying to playground environment from notebook
 
 ---
 

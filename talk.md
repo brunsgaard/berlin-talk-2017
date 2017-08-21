@@ -27,7 +27,6 @@ layout: false
 
 * PART2: From **PREDICTION** to **PRODUCTION**
 
-* The idea of an end-to-end data science platform
 
 ---
 
@@ -111,33 +110,30 @@ template: inverse
 
 ---
 
-# Goal
+# Let's get started
+We could write a simple API endpoint that loads in data and trains the model.
+There after we should be ready to serve requests
+<br><br>.center[![:scale 50%](img/the-naive-approach-1.svg)]<br>
 
-Create and deploy an service there is
+```python
+import api
 
-* tested
-* versioned
-* multi az
-* easy to upgrade
-* easy to rollback
-* scalable
-* ... 
+app = api.create(name='Berlin')
 
-In short, is has to be production grade.
+@app.route('/predict', method=['POST'])
+def predict(request):
+    model = Model()
+    training_data = db.get_all_observed_events()
+    model.train(training_data)
+    return model.predict(request.json)
 
-
-# Constraints
-
-* Scikit learn
-* Python
+app.run()
+```
 
 ---
 
+# What could possible to wrong
 
-# The naive approach
-
-We create a application that loads the data and trains the model on runtime. 
-<br><br>.center[![:scale 50%](img/the-naive-approach-1.svg)]<br>
 
 ```python
 import api
@@ -154,105 +150,197 @@ def predict(request):
 app.run()
 ```
 
----
+ * Data availability - .small[we assume the data is available]
+ * Data selection and preprocessing - .small[we select all the data and assume it is preprocessed]
+ * Model training - .small[might take long time depending on the model and the data]
+ * Resouce contraints - .small[CPU time and Memory]
 
-# The naive approach
-
-A CI is testing the application and releases an artifact which is run on a VPS
-in the cloud, A provisioning system is used to setup the VPS and install the
-software.
-
-<br>.center[![:scale 100%](img/the-naive-approach-2.svg)]
-
+All in all this is just not a great solution!
 
 ---
 
-# The naive approach
+# So, what is needed?
 
-Soon we experience that our solution starts to struggle as data scales
+To build a __continuously updated prediction api__ we need:
 
-* Model training might be too slow and makes requests timeout
-* Model training takes up an unhealthy amount of CPU time
-* The server is running out of memory
+--
 
-## Notes regarding ML models
+* Data integration
+  * _Extract_ data from the original data sources.
+  * _Transform_ data into a _prepared dataset_
+  * _Load_ the _prepared dataset_ into our data warehouse
 
-* The time complexity is at best `\(O(n)\)` (but often worse)
-* Internal data structures might grow rapidly, (depending on the model)
+.credit[See more https://en.wikipedia.org/wiki/Extract,_transform,_load]
+ <!---
+ Function consumer data to prepared data
+ pr aggrement
+--->
 
----
+--
 
-# Async training approachsync training approach
-
-So we split the application in two components, the first component (shown
-below) will continuously train new models and upload the serialized models to
-s3 
-
-<br>.center[![:scale 65%](img/async-training-approach-1.svg)]
-
----
-
-# Async training approach
-
-Now, to provision an api server we take serialized model from s3 and
-deserialize it into our api appilication
-
-<br>.center[![:scale 100%](img/async-training-approach-2.svg)]
+* Continuous model building
+  * _Re-train_ models triggered on events
+  * _Testing_ if the new model is sane
+  * _Resource consumption_ should be monitored 
+  * _Serialization_ and dezerialization ('environments must be identical')
 
 ---
 
-# Async training approach
+# So, what is needed?
 
-We solved one problem, but introduced another. 
+--
 
-**We have to serialize and deserialize in identical environments.**
+* Api package
+  * Authentication
+  * Schema validation
+  * Model loading ('Environment mismatch')
+  * Logging
+  * Metrics
+  * Packaging
 
-That might introduce problems
 
- * if we change the model code
- * if scikit learn upgrade 
- * scikit learn dependencies are upgraded, 
- * a data scientist manually uploading a new model to stating
+--
 
-We can keep a comprehensive amount of environment metadata with the models, but
-it feels overcomplicated and the solution is lacking robustness.
-
-We are not happy with the solution yet! :(
+* Operations platform
+  * Codified provisioning
+  * High availability
+  * Zero downtime releases
+  * Scalability
+  * ...
 
 ---
 
-# Containers to the rescue
+# Continuous is the keyword
+
+So what we need is a pipeline, that lets us train new models at will and
+redeploy to production multiple times a day.
+
+To sum it up we need three components
+
+* Datastore - will make _prepared datasets_ available
+* CI/Scheduler - will train models continously
+* Api - will map REST call to the models
+
+<br>.center[![:scale 70%](img/components.svg)]
+
+Also we need an operations solution to make sure the whole service is available
+
+---
+
+layout: false
+
+template: inverse
+
+# Getting data into the system
+
+---
+
+# The process of ETL
+
+Extract, transform, load...
+
+<br>.center[![:scale 70%](img/ETL.png)]
+
+
+---
+
+# Prepared datasets
+
+We create a _prepared dataset_ per client/model/agreement, e.g.
+
+.small[`e-conomic/smartscan/agreement552343`]
+
+The datasets might at this point hold certain properties if needed
+
+ * Entries are sorted by time stamp
+ * Duplicates are removed
+ * Text have been normalized
+ * Maximum number of entries
+
+Importing a dataset is now easy and can look like this.
+
+```python
+import datastore
+
+# Fetching a dataset that are already prepared for the model
+data = datastore.get('e-conomic/smartscan/agreement552343')
+```
+
+Prepared datasets are updated as frequently as the client needs.
+
+ <!---
+What does the properties give us
+ - Resource limits
+ - Transfer speed assertions
+ - Model training time assertions
+--->
+
+---
+
+layout: false
+
+template: inverse
+
+# Training models
+
+---
+
+# Training Models
+
+Depending on the model type, training might happen before or during call time.
+
+* _User_ - small models are trained on _call time_ with a _prepared dataset_
+* _Domain_ - bigger models are _pre-trained_ with a collection of _prepared datasets_
+* _Mix_ - some domain models are modified with a _prepared dataset_ on _call time_
+
+
+--
+<br>
+__We will only look at _Domain_ models__
+
+--
+
+<br>
+
+We use containers to ensure that the environment is fixed.
+
+---
+
+# Training Models
 
 <br>.center[![:scale 70%](img/containers-to-the-rescue.png)]
 
+
 ---
 
-# A container based approach
+# Training Models
 
-Now instead of training models and storing them on s3, we now build container
-images and store then in a docker regrestry.
+* The container image holds the api code, the trained\_models and all the
+dependencies. 
+* We build on container images on the CI and store the images on
+azure container registry
+
 
 <br>.center[![:scale 65%](img/a-container-based-approach-1.svg)]<br>
 
-The container image holds the api code, the trained\_models and all the
-dependencies.
 
 ---
 
-# Docker in practice
+# Dockerfile
 
 A `Dockerfile` is used to describe how an image is build
 
 .small[
 ```Dockerfile
-FROM visma/vml:1.0.0                 # base image with c/c++ deps
+FROM visma/machinelearning:1.0.4                       # base image with c/c++ deps
 
-COPY code /code                      # copy the code
-RUN pip install -r requirements.txt  # install deps
-RUN python train_models.py           # train and serialize models 
-RUN py.test --pyargs .               # test the modes
+RUN pip install vml-model-smartscan        # install deps
+RUN pip install vml-model-api              # install deps
 
-CMD ["code/app.py"]                  # run the application
+RUN python train_models.py                 # train and serialize models 
+RUN py.test --pyargs .                     # test the model and sanity
+
+ENTRYPOINT ["python -m vml-api"]           # run the application
 ```
 ]
 
@@ -260,12 +348,19 @@ Then save it to the registry
 
 .small[
 ```bash
-~ docker push vml.azurecr.io/model-nps:local.1499177682
+~ docker push vml.azurecr.io/model-smartscan:v2-1499177682
 ```
 ]
 
-Now we have a registry with container images, how de we get a service out of
-those?
+
+---
+
+layout: false
+
+template: inverse
+
+# Container orchestration
+In kubernetes we trust
 
 ---
 
@@ -290,23 +385,24 @@ An example of a kuberentes configuration
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: einvoice-model
+  name: smartscan-model
 spec:
   replicas: 3
   template:
-    metadata:
-      labels:
-        app: einvoice-model
     spec:
       containers:
-      - name: einvoice-model
-        image: economic.azurecr.io/einvoice-model:v2
-        imagePullPolicy: Always
+      - name: smartscan-model
+      - image: vml.azurecr.io/model-smartscan:v2-1499177682
+        resources:
+          requests:
+            memory: "512Mi"
+          limits:
+            memory: "1024Mi"
         env:
         - name: AWS_CREDENTIALS
           valueFrom:
             secretKeyRef:
-              name: einvoice-model-secrets
+              name: smartscan-model-secrets
               key: aws_credentials
         ports:
         - containerPort: 80
@@ -315,61 +411,37 @@ spec:
 
 ---
 
-# A container based approach
+# Putting it all together
 
-A ci is building new images over time
-<br><br>.left[![:scale 30%](img/a-container-based-approach-2.svg)]<br>
-When kubernetes is notified about a new image it updates the service
-<br><br>.center[![:scale 100%](img/a-container-based-approach-3.svg)]
+We have a datastore with _prepared datasets_ and a CI is building new images over time
+<br>.center[![:scale 35%](img/a-container-based-approach-2.svg)]<br>
+The CI will tell Kubernetes to replace the containers, as soon as new images
+are available
 
----
-
-# A container based approach
-
-* Isolation (deps, model, python)
-* Docker
-  * Testing
-  * Artifacts
-* Kubernetes
-  * Scanling
-  * roling deployments
-* Usibility
+.center[![:scale 90%](img/a-container-based-approach-3.svg)]
 
 ---
 
-## A small tool for automating the deployment
+## Docker and Kubernetes gave me
 
-Enabeling Data scientists and other visma teams to deploy production grade
-models with new cli commands
-
-.center[![:scale 60%](img/a-small-tool-for-automating-the-deployment.png)]
-
+* Agile application creation and deployment
+* Environmental consistency
+* Dependency isolation
+* Rolling updates
+* Scaling thought in
+* State configuration of services
+* Dev and Ops separation of concerns
 ---
 
-# Putting Helges model into production
+##Deploying to Kubernetes from notebook
 
-2 min live coding, tool not ready yet
+Gazelle is a small tool we are working on that will let data scientists spin up
+prediction endpoints from a jupyter notebook.
 
----
+It works by serializing the model and sending it to a server that puts it into
+a conatiner uploads the image and notifies kubernets about the the new endpoint
 
-# Future work
-
-Saas solution for hosting machine learning models in a VCDM compliant way.
-
-* Dashbord
-* Datastore
-* A/B testing
-
----
-
-
-# Conslusions
-
-* Red thread
-* know what you will say
-* Docker is process with dependecies
-* tools explanation
-* Flow is missing
+Lets us try it to get Helges models up and running.
 
 ---
 

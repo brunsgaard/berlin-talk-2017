@@ -177,8 +177,8 @@ To build a __continuously updated prediction service__ we need:
 * Continuous model building
   * _Re-train_ models triggered on events
   * _Testing_ if the new model is sane
-  * _Resource consumption_ should be monitored 
-  * _Serialization_ and dezerialization ('environments must be identical')
+  * _Resource consumption_ should be monitored
+  * _Serialization_ and deserialization ('environments must be identical')
 
 ---
 
@@ -288,10 +288,10 @@ Depending on the model type, training might happen before or during call time.
 
 --->
 
-# Challenges 
+# Challenges
 
 * Serializing trained python model objects
-* Load in newly trained models into the api
+* Load in newly trained models into the API
 
 
 --
@@ -299,8 +299,8 @@ Depending on the model type, training might happen before or during call time.
 We want to:
 
  * Ensure that the environment does not change
- * Ideally we would like to pack trained models with the api
- * Matrue model rollout procedure
+ * Ideally we would like to pack trained models with the API
+ * Mature model rollout procedure
 
 <!---
  * Models are to us what data is to you
@@ -320,8 +320,8 @@ We want to:
 # Containers to the rescue
 
 The container image holds
- * Api code
- * Serialized trained models (And the model code)
+ * API code
+ * Serialized trained models (and the model code)
  * Dependencies
 
 
@@ -341,7 +341,7 @@ FROM visma/machinelearning:1.1.4           # base image with c/c++ deps
 RUN pip install vml-model-nps              # install deps
 RUN pip install vml-api                    # install deps
 
-RUN python train_models.py                 # train and serialize models 
+RUN python train_models.py                 # train and serialize models
 RUN py.test --pyargs .                     # test the model and sanity
 
 ENTRYPOINT ["python app.py"]               # run the application
@@ -384,7 +384,7 @@ In Kubernetes we trust
 
 # Kubernetes
 
-An example of a kuberentes configuration
+An example of a kubernetes configuration
 
 .small[
 ```yaml

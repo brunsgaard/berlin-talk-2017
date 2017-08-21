@@ -148,7 +148,7 @@ count: false
  * Model training
 --
 count: false
- * Resouce contraints
+ * Resource constraints
 --
 count: false
 

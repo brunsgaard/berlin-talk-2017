@@ -21,7 +21,7 @@ layout: false
 
 # Agenda
 
-* Our team and our mission
+* The team and our mission
 
 * PART1: From **DATA** to **PREDICTION**
 
@@ -30,13 +30,17 @@ layout: false
 
 ---
 
-# About us
+# The team
 
-* The Visma Machine Learning Team
+* Dedicated to Machine Learning
+
 * Located in Copenhagen (e-conomic office)
-* Team headcount: 4
-* Main focus: AutoSuggest
 
+* Team headcount: 4
+
+* Main focus: AutoSuggest (+ model hosting service)
+
+<!--
 #### Helge Munk Jakobsen
 
 * Interested in data and predictive modelling
@@ -45,6 +49,7 @@ layout: false
 
 * Interested in software arhitecture, elegant code and best practices
 * Designing and building an upcomming end-to-end data science platform
+-->
 
 ---
 
@@ -56,15 +61,11 @@ a gentle introduction to building predictive models aimed at developers
 
 ---
 
-# Intro
-
-Data -> Magic -> Prediction
+<br>.center[![:scale 100%](img/perception-of-ml.png)]
 
 ---
 
-# Intro
-
-Data -> ~~Magic~~ Math + Code -> Prediction
+<br>.center[![:scale 100%](img/steps-to-predictive-modelling.jpg)]
 
 ---
 
@@ -72,24 +73,11 @@ Data -> ~~Magic~~ Math + Code -> Prediction
 
 * **Goal:** Build account suggestion service
 
-* **Example:** For "Taxi to conference" -> Travel expense account (maybe)
+* **Example:**
 
-* No hardcoded rules
+<center>"Taxi to meeting" -> Travel expenses (maybe)</center>
 
 <br>.center[![:scale 65%](img/hands-on-exercise.png)]
-
----
-
-# The big picture
-
-* Supervised learning (predictions)
-
-* Classification
-
-* One single type of model
-
-<br>.center[![:scale 65%](img/the-big-picture.png)]
-
 
 ---
 

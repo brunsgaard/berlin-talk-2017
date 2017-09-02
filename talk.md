@@ -61,7 +61,12 @@ a gentle introduction to building predictive models aimed at developers
 
 ---
 
-<br>.center[![:scale 100%](img/perception-of-ml.png)]
+class: background-image
+background-image: url(img/perception-of-ml.png)
+
+---
+
+<img href="img/perception-of-ml.png"></img>
 
 ---
 
@@ -210,7 +215,7 @@ layout: false
 
 template: inverse
 
-# Getting data into the system
+# Challenge:<br><br>Getting data into the system
 
 ---
 
@@ -247,7 +252,7 @@ data = datastore.get('e-conomic/nps-model/agreement552343')
 ```
 
 
- <!---
+<!---
 What does the properties give us
  - Resource limits
  - Transfer speed assertions
@@ -260,7 +265,7 @@ layout: false
 
 template: inverse
 
-# Training models
+# Challenge:<br><br>Training models
 
 ---
 
@@ -276,7 +281,7 @@ Depending on the model type, training might happen before or during call time.
 
 --->
 
-# Challenges
+# Training models
 
 * Serializing trained python model objects
 * Load in newly trained models into the API
@@ -295,6 +300,14 @@ We want to:
  --->
 
 
+
+---
+
+layout: false
+
+template: inverse
+
+# Our solution:<br><br>Containers to the rescue
 
 ---
 

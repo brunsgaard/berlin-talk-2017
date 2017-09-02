@@ -445,9 +445,32 @@ scheduler + kubernetes = containers
 
 ---
 
-## Deploying to playground environment from notebook
+# Good stuff, but complicated
+
+My job is to enable data scientist to push models.  Soo, I wrote a lille framework:
+
+.center[![:scale 70%](img/gazelle.png)]
 
 ---
+
+# Gazelle
+
+.center[![:scale 90%](img/gazelle1.png)]
+
+---
+
+# Gazelle
+
+.center[![:scale 90%](img/gazelle2.png)]
+
+---
+
+# Lets demo it
+
+.center[![:scale 90%](img/trollface.jpg)]
+
+---
+
 
 template: inverse
 

@@ -6,7 +6,7 @@ class: center, middle, inverse
 # Predictive services
 <br>
 
-Jonas Brunsgaard & Helge Munk Jakobsen   
+Jonas Brunsgaard & Helge Munk Jacobsen   
 .small[jonas.brunsgaard@visma.com]   
 .small[helge.munk.jacobsen@visma.com]
 

@@ -62,7 +62,7 @@ a gentle introduction to building predictive models aimed at developers
 ---
 
 class: background-image
-background-image: url(img/perception-of-ml.png)
+background-image: url(img/perception-of-ml-2.jpg)
 
 ---
 
@@ -72,11 +72,7 @@ background-image: url(img/perception-of-ml.png)
 
 # Hands on exercise
 
-* **Goal:** Build account suggestion service
-
-* **Example:**
-
-<center>"Taxi to meeting" -> Travel expenses (maybe)</center>
+**Goal:** Build account suggestion service
 
 <br>.center[![:scale 65%](img/hands-on-exercise.png)]
 

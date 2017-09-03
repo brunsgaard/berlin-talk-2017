@@ -4,7 +4,6 @@ class: center, middle, inverse
 
 ---
 # Predictive services
-## From data to production
 <br>
 
 Jonas Brunsgaard & Helge Munk Jakobsen   

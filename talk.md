@@ -280,7 +280,7 @@ Depending on the model type, training might happen before or during call time.
 # Training models
 
 * Serializing trained python model objects
-* Load in newly trained models into the API
+* Replace new models in the api without downtime
 
 
 --
@@ -322,7 +322,7 @@ The container image holds
  * Dependencies
 
 
-<br>.center[![:scale 65%](img/a-container-based-approach-1.svg)]<br>
+<br>.center[![:scale 50%](img/a-container-based-approach-1.svg)]<br>
 
 
 ---
@@ -414,11 +414,11 @@ spec:
 
 _prepared datasets_ + scheduler = container images
 
-<br>.center[![:scale 35%](img/a-container-based-approach-2.svg)]<br>
+<br>.center[![:scale 25%](img/a-container-based-approach-2.svg)]<br>
 
 scheduler + kubernetes = containers
 
-.center[![:scale 90%](img/a-container-based-approach-3.svg)]
+.center[![:scale 65%](img/a-container-based-approach-3.svg)]
 
 
 <!---
@@ -439,7 +439,13 @@ scheduler + kubernetes = containers
 
 # Gazelle
 
-.center[![:scale 70%](img/gazelle.png)]
+.center[![:scale 55%](img/gazelle.png)]
+
+---
+
+# Gazelle
+
+.center[![:scale 80%](img/gazelle-comp2.png)]
 
 ---
 

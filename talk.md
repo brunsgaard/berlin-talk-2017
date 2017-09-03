@@ -66,10 +66,6 @@ background-image: url(img/perception-of-ml.png)
 
 ---
 
-<img href="img/perception-of-ml.png"></img>
-
----
-
 <br>.center[![:scale 100%](img/steps-to-predictive-modelling.jpg)]
 
 ---

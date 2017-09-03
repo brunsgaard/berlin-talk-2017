@@ -219,7 +219,7 @@ template: inverse
 
 Extract, transform, load...
 
-<br>.center[![:scale 65%](img/ETL.png)]
+<br>.center[![:scale 45%](img/ETL.png)]
 
 
 ---
@@ -309,7 +309,7 @@ template: inverse
 
 # Containers to the rescue
 
-<br>.center[![:scale 70%](img/containers-to-the-rescue.png)]
+<br>.center[![:scale 60%](img/containers-to-the-rescue.png)]
 
 
 ---
@@ -370,10 +370,6 @@ In Kubernetes we trust
 # What is kubernetes
 
 .center[![:scale 100%](img/what-is-kubernetes-1.png)]
-
---
-
-.center[![:scale 100%](img/what-is-kubernetes-2.png)]
 
 
 ---

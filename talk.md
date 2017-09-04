@@ -56,8 +56,6 @@ template: inverse
 
 # From **DATA** to **PREDICTION**
 
-a gentle introduction to building predictive models aimed at developers
-
 ---
 
 class: background-image
